@@ -18,21 +18,22 @@ In `run_example.ipynb`, I attach the example codes to use RobustSTL and the outp
 <img src='./assets/RobustSTL_result.png'/> 
 
 ## Codes
-* `main.py` : run example code
-* `RobustSTL.py`: contains RobustSTL algorithm and each process.
-* `utils.py`: common utility functions
-* `sample_generator.py`: generation codes of synthetic sample.
-* `l1.py` : optimizer of l1 norm approximation (source: cvxopt)
+* `example.py` : run example code
+* `run_example.ipynb` : run example code in jupyter notebook
 
 ## Arugments of RobustSTL
 - input : input series
 - season_len : length of seasonal period
-- reg1 : first order regularization parameter for trend extraction
-- reg2 : second order regularization parameter for trend extraction
-- K : number of past season samples in seasonality extraction
-- H : number of neighborhood in seasonality extraction
+- reg1: first order regularization parameter for trend extraction
+- reg2: second order regularization parameter for trend extraction
+- K: number of past season samples in seasonaility extraction
+- H: number of neighborhood in seasonality extraction
 - dn1, dn2 : hyperparameter of bilateral filter in denoising step.
-- ds1, ds2 : hyperparameter of bilarteral filter in seasonality extraction step.
+- ds1, ds2 : hypterparameter of bilarteral filter in seasonality extraction step.
+- learning_rate: the Adam optimizer learning rate
+- max_iter: number of iterations for the Adam optimizer
+- max_trials: number of outer STL iterations
+- verbose: whether showing or hiding progress bar
 
 ## Shape of input sample
 Basically, RobustSTL is for univariate time series sample.  
