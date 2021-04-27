@@ -1,5 +1,5 @@
 # RobustSTL: A Robust Seasonal-Trend Decomposition Algorithm for Long Time Series (AAAI 2019)
-This repository contains python (3.5.2) implementation of RobustSTL ([paper](https://arxiv.org/abs/1812.01767))  . 
+This repository contains python (3.8) implementation of RobustSTL ([paper](https://arxiv.org/abs/1812.01767))  . 
 
 Decomposing complex time series into trend, seasonality, and remainder components is an important task to facilitate time series anomaly detection and forecasting.  
 RobustSTL extract trend using LAD loss with sparse regularization and non-local seasonal filtering.  
@@ -8,12 +8,8 @@ Compared to previous approaches (such as traditional STL), RobustSTL has advanta
 2) robustness of data with anomalies  
 3) applicability on time series with long seasonality period.  
 
-## Requirments & Run
-First, install some required libraries using pip.
-```
-pip3 install -r requirments.txt
-python3 main.py
-```
+## Installation
+`pip install --upgrade git+https://github.com/ariaghora/RobustSTL.git`
 
 ## Sample Results 
 We generate a synthetic sample (sample_generator.py) and decompose it into `trend`, `seasonality`, and `remainder`.
