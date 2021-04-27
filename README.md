@@ -11,9 +11,25 @@ Compared to previous approaches (such as traditional STL), RobustSTL has advanta
 ## Installation
 `pip install --upgrade git+https://github.com/ariaghora/RobustSTL.git`
 
-## Codes
-* `example.py` : run example code
-* `run_example.ipynb` : run example code in jupyter notebook
+## Usage
+```python
+from rstl import RobustSTL
+
+result = RobustSTL(input,
+                   season_len,
+                   reg1=10,
+                   reg2=0.5,
+                   K=2,
+                   H=5,
+                   dn1=1,
+                   dn2=1,
+                   ds1=50,
+                   ds2=1,
+                   learning_rate=0.1,
+                   max_iter=100,
+                   max_trial=10,
+                   verbose=True)
+```
 
 ## Arugments of RobustSTL
 - input : input series
@@ -37,6 +53,10 @@ Each series *have to* have same time length.
 
 * Univariate Time Series: `[Time] or [Time,1]`
 * Multivariate Time Series: `[N, Time] or [N, Time, 1]`
+
+## Codes
+* `example.py` : run example code
+* `run_example.ipynb` : run example code in jupyter notebook
 
 ## Etc
 The original paper has wrong notation in seasonality extraction.  
