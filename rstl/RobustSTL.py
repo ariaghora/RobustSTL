@@ -25,26 +25,6 @@ def denoise_step(sample, H=3, dn1=1., dn2=1.):
     return denoise_sample
 
 
-def trend_extraction(sample, season_len, reg1=10., reg2=0.5):
-    sample_len = len(sample)
-    season_diff = sample[season_len:] - sample[:-season_len]
-    assert len(season_diff) == (sample_len - season_len)
-    q = np.concatenate([season_diff, np.zeros([sample_len*2-3])])
-    q = np.reshape(q, [len(q), 1])
-    q = matrix(q)
-
-    M = get_toeplitz([sample_len-season_len, sample_len-1],
-                     np.ones([season_len]))
-    D = get_toeplitz([sample_len-2, sample_len-1], np.array([1, -1]))
-    P = np.concatenate([M, reg1*np.eye(sample_len-1), reg2*D], axis=0)
-    P = matrix(P)
-
-    delta_trends = l1(P, q)
-    relative_trends = get_relative_trends(delta_trends)
-
-    return sample-relative_trends, relative_trends
-
-
 def seasonality_extraction(sample, season_len=10, K=2, H=5, ds1=50., ds2=1.):
     sample_len = len(sample)
     idx_list = np.arange(sample_len)
@@ -82,6 +62,23 @@ def check_converge_criteria(prev_remainders, remainders):
         return True
     else:
         return False
+
+
+def extract_trend(dt, sample, season_len, M, D, g, reg1, reg2, l1loss_func, opt, max_iter, trial):
+    bar = tqdm(range(max_iter))
+    bar.set_description(f'Trial {trial}')
+    for i in bar:
+        opt.zero_grad()
+        loss = l1loss_func(g, M @ dt) + \
+            reg1 * torch.sum(torch.abs(dt)) + \
+            reg2 * torch.sum(torch.abs(D@dt))
+        loss.backward()
+        opt.step()
+    delta_trends = dt.detach().cpu().numpy()
+    relative_trends = get_relative_trends(delta_trends)
+    detrend_sample = sample-relative_trends
+
+    return relative_trends, detrend_sample
 
 
 def _RobustSTL(input, season_len, reg1, reg2, K, H, dn1, dn2, ds1, ds2, learning_rate, max_iter, max_trials, verbose):
@@ -126,18 +123,9 @@ def _RobustSTL(input, season_len, reg1, reg2, K, H, dn1, dn2, ds1, ds2, learning
             denoise_step(sample, H, dn1, dn2)
 
         # step2: trend extraction via LAD loss regression (using gradient descent)
-        bar = tqdm(range(max_iter))
-        bar.set_description(f'Trial {trial}')
-        for i in bar:
-            opt.zero_grad()
-            loss = l1loss(g, M @ dt) + \
-                reg1 * torch.sum(torch.abs(dt)) + \
-                reg2 * torch.sum(torch.abs(D@dt))
-            loss.backward()
-            opt.step()
-        delta_trends = dt.detach().cpu().numpy()
-        relative_trends = get_relative_trends(delta_trends)
-        detrend_sample = sample-relative_trends
+        relative_trends, detrend_sample = extract_trend(dt, sample, season_len, M, D,
+                                                        g, reg1, reg2, l1loss, opt,
+                                                        max_iter, trial)
 
         # step3: seasonality extraction via non-local seasonal filtering
         seasons_tilda =\
