@@ -11,12 +11,6 @@ Compared to previous approaches (such as traditional STL), RobustSTL has advanta
 ## Installation
 `pip install --upgrade git+https://github.com/ariaghora/RobustSTL.git`
 
-## Sample Results 
-We generate a synthetic sample (sample_generator.py) and decompose it into `trend`, `seasonality`, and `remainder`.
-In `run_example.ipynb`, I attach the example codes to use RobustSTL and the outputs.
-
-<img src='./assets/RobustSTL_result.png'/> 
-
 ## Codes
 * `example.py` : run example code
 * `run_example.ipynb` : run example code in jupyter notebook
